@@ -1,0 +1,315 @@
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" href="style.css">
+        <title>JavaScript survivor's guide: first training !</title>
+        <script type='text/javascript'>
+            // To show he solution to an exercise
+            function showSolution(solutionId) {
+                document.getElementById('solution' + solutionId).style.display = 'inline-block';
+            }
+            // To evaluate "simple" JS code extract and output the result in a simple div
+            function runProgram(pgmId) {
+                var UI = document.getElementById('program' + pgmId).value;
+                document.getElementById('result' + pgmId).innerHTML = eval(UI);
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Premiers pas avec JavaScript (JS)</h1>
+        <p>
+            JavaScript peut être testé facilement en éditant une simple page HTML dans laquelle on intègre une balise <tt>&lt;script&gt;</tt>. Il suffit ensuite d'ouvrir la page avec votre <b>Chromium</b> afin de charger et exécuter le JS correspondant. Voici un exemple de page minimale:
+</p>
+<div class="code">
+    <pre>
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;script&gt;
+alert("Hello world !");
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+    </pre>
+</div>
+<p>Copiez/collez cet exemple et sauvez le dans un fichier nommé <tt>minimal.html</tt>, puis ouvrez-le dans votre navigateur pour observer ce qu'il produit. Modifiez ensuite ce fichier en remplaçant <tt>alert</tt> par <tt>console.log</tt> puis regardez ce qu'il se passe.
+</p>
+<p>Ouvrez les outils du développeur en cherchant dans le menu <tt>Plus d'outils/Outils de développement</tt> de Chromium et sélectionnez l'item <tt>Console</tt> puis rechargez la page. Nous utiliserons souvent ce mécanisme de <it>logging</it> lorsque nous souhaiterons débuggeur nos programmes JS.</p>
+
+<h2>Parcours des types de bases</h2>
+
+<p>Afin de rendre un peu plus rapide la prise en main des types primitifs et tableaux de JS, nous allons exploiter le fait que ce langage est dynamique (ie. pas besoin de compilation) pour nous entraîner directement dans cette page. Pour cela, vous trouverez par moment une zone de saisie dans laquelle vous pourrez éditer directement du JS et l'exécutez. Cependant, n'oubliez pas de laisser en dernière ligne le nom de la variable dont vous souhaitez visualiser le résultat.
+</p>      
+
+<!-- Program 1 -->
+<div>
+    <textarea id="program1" class="programInput" rows="4" cols="45">
+var msg = "Hello world";
+msg;
+    </textarea>
+    <div id='solution1' class='solution'>
+        <textarea class="programInput" readonly rows="4" cols="50">
+// Non, non, vous devez chercher ;)
+        </textarea>
+    </div>
+</div>
+<div id='result1' class='programOutput'>Cliquez sur 'Run' pour obtenir la sortie standard ici ...</div><br/>
+<button onClick='runProgram(1)'>Run</button>
+<button onClick='showSolution(1)'>Surrender</button>
+
+<!-- Program 1 -->
+
+<p>Que se passe-t-il si vous supprimez la deuxième ligne de ce programme ? Comment faut-il le modifier si l'on souhaite voir apparaître la valeur de la variable <tt>msg</tt> dans la console ?</p>
+<p>Lors des TP, vous veillerez à conserver la console ouverte dans votre navigateur, cela peut-être très utile ;)</p>
+
+<p>Nous allons maintenant explorer rapidement les types primitifs de JS:
+<ul>
+    <li><tt>Boolean</tt>: le type booléen classique, définissant deux valeurs <tt>true</tt> et <tt>false</tt></li>
+<li><tt>Number</tt>: le type représentant les nombres, sachant qu'en JS tous les nombres sont représentés par des <tt>double</tt> !</li>
+<li><tt>String</tt>: la chaîne de caractères, qui peut-être délimité soit par des apostrophes, soit par des guillements.</li>
+<li><tt>undefined</tt>: la valeur représentant une valeur indéfinie (cf. manipulation que vous aviez fait ci-dessus en enlevant la variable à la dernière ligne du programme).</li>
+<li><tt>null</tt>: la valeur représentant l'absence d'objet (équivaleur au <tt>null</tt> de Java).</li>
+</ul>
+Afin de prendre en main ces types primitifs, amusez-vous à les manipuler en complétant le programme ci-dessous et vérifiant ce qui s'affiche dans la console.
+</p>
+
+<!-- Program 2 -->
+<div>
+    <textarea id="program2" class="programInput" rows="8" cols="50">
+var unNombre  = 0; // initialisez cette variable à trente deux
+console.log("unNombre="+unNombre);
+var unBooleen = ''; // initialisez cette variable à vrai
+console.log("unBooleen="+unBooleen);
+var uneChaine = ''; // initialisez à Hello world
+console.log("uneChaine="+uneChaine);
+undefined;
+    </textarea>
+    <div id='result2' class='programOutput'></div>
+</div><br/>
+<button onClick='runProgram(2)'>Run</button><BR>
+<!-- Program 2 -->
+<p>
+    JavaScript étant typé dynamiquement, il est parfois nécessaire de déterminer le type d'une variable donnée. A cette fin, l'opérateur <tt>typeof</tt> peut-être utilisé. Ecrivez la séquence d'instructions permettant d'afficher des messages tels que <tt>XX est une chaîne</tt> ou <tt>XX est un nombre</tt> en exploitant l'opérateur <tt>typeof &lt;value&gt;</tt>.
+</p>
+
+<!-- Program 3 -->
+<div>
+    <textarea id="program3" class="programInput" rows="8" cols="50">
+var a  = 0; // initialisez cette variable avec différents types de valeurs
+
+// si a est un nombre affiche "<valeur de a> est un nombre
+// si a est un booléen affiche "<valeur de a> est un booléen
+// et ainsi de suite pour les différents types présentés ci-dessus
+
+undefined;
+                </textarea>
+                <div id='solution3' class='solution'>
+                    <textarea class="programInput" readonly rows="4" cols="50">
+// Non, non, vous devez chercher ;)
+                    </textarea>
+                </div>
+                </div><br/>
+                <button onClick='runProgram(3)'>Run</button>
+                <button onClick='showSolution(3)'>Surrender</button><br/>
+                <div id='result3' class='programOutput'></div>
+                <!-- Program 3 -->
+
+                <p>
+                    Nous allons nous intéresser maintenant aux tableaux. En JavaScript, un tableau (<tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></tt>) se définit comme un ensemble de valeurs séparées par des virgules et entourées par des crochets. Un tableau est un objet et dispose donc d'un certain nombre de fonctions pratiques:
+                <ul>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat">concat()</a></tt>: <i>joins two or more arrays, and returns a copy of the joined arrays</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">indexOf()</a></tt>: <i>search the array for an element and returns its position</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">join()</a></tt>:	<i>joins all elements of an array into a string</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">lastIndexOf()</a></tt>: <i>search the array for an element, starting at the end, and returns its position</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">pop()</a></tt>: <i>removes the last element of an array, and returns that element</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">push()</a></tt>: <i>adds new elements to the end of an array, and returns the new length</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">reverse()</a></tt>: <i>reverses the order of the elements in an array</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift">shift()</a></tt>: <i>removes the first element of an array, and returns that element</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">slice()</a></tt>: <i>selects a part of an array, and returns the new array</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort()</a></tt>: <i>sorts the elements of an array</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">splice()</a></tt>: <i>adds/removes elements from an array</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString()</a></tt>: <i>converts an array to a string, and returns the result</i></li>
+                    <li><tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">unshift()</a></tt>: <i>adds new elements to the beginning of an array, and returns the new length</i></li>
+                </ul>
+                </p>
+                <p>
+                    Pour nous entraîner avec les tableaux, initialisez le tableau <tt>t</tt> avec un nombre, un booléen, une fonction retournant 42 (rappel: <tt>function(){return 42;}</tt>) et un objet n'ayant que la propriété <tt>name</tt> avec pour valeur <tt>toto</tt> (rappel: <tt>{name: 'toto'}</tt>). 
+                <ul>
+                    <li>dans un premier temps, affichez ce tableau sur la console.</li>
+                    <li>que constatez-vous pour le dernier élément du tableau ? Amusez-vous à explorer un peu son contenu, nous reviendrons plus tard là dessus.</li>
+                    <li>parcourez maintenant l'ensemble du tableau avec une boucle à compteur et afficher chacun des éléments sur la console.</li>
+                    <li>essayez ensuite d'afficher le résultat de l'appel à la fonction contenue dans le tableau (indice: elle n'a pas de paramètre!).</li>
+                    <li>dans un nouvel affichage sur la console, affichez la valeur de la propriété <tt>name</tt> de l'objet en dernière position du tableau.</li>
+                    <li>utilisez ensuite les fonctions <tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">push()</a></tt> et <tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">pop()</a></tt> pour ajouter puis enlever l'élément que vous souhaitez au tableau.</li>
+                    <li>utilisez la fonction <tt><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">slice()</a></tt> afin de ne conserver que les deux derniers éléments du tableau <tt>tt</tt></li>
+                    <li>écrivez une fonction qui filtre le tableau <tt>tt</tt> afin de ne conserver que les éléments qui sont des fonctions.</li>
+                </ul>
+                </p>
+
+                <!-- Program 4 -->
+                <div>
+                    <textarea id="program4" class="programInput" rows="8" cols="50">
+var t = []; // à compléter ...
+undefined;
+                    </textarea>
+                    <div id='solution4' class='solution'>
+                        <textarea class="programInput" readonly rows="4" cols="50">
+// Non, non, vous devez chercher ;)
+                        </textarea>
+                    </div>
+                </div><br/>
+                <button onClick='runProgram(4)'>Run</button>
+                <button onClick='showSolution(4)'>Surrender</button><br/>
+                <div id='result4' class='programOutput'></div>
+                <!-- Program 4 -->
+
+                <h2>Le retour de votre jeu préféré !</h2>
+
+                <p>Maintenant que vous maîtrisez un peu plus les tableaux, nous allons revenir sur un thème que vous adorez: le jeu de la vie ! ;) Comme vous vous en rappelez, le jeu de la vie consiste à simuler l'évolution d'une population de cellules sur une grille à deux dimensions. Nous allons pour terminer cette séance, ré-écrire une version du jeu de la vie en JavaScript</p>
+
+                <h3>Préparation</h3>
+
+                <p>Afin de bénéficier des outils fournis par le navigateur, au lieu de travailler directement dans cette page, créez une page <tt>gol.html</tt> avec le contenu suivant:
+                </p>
+                <div class="code">
+                    <pre>
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;div id="output"&gt;&lt;/div&gt;
+    &lt;script type='text/javascript'&gt;
+// Mettre votre code JS ici
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+                    </pre>
+                </div>
+                <p>Ouvrez ensuite cette page dans Chromium avec bien sûr les outils du développeur. Vous pourrez ainsi débugguer plus facilement votre programme en ayant les numéros de ligne correspondant en cas d'erreur et surtout la possibilité d'appeler vos fonctions directement depuis la console afin de les tester.
+                </p>
+
+                <h3>Règles du jeu</h3>
+                <p>
+                    Dans un premier temps, nous allons travailler avec une petite grille constituté de 8x8 cases chacune pouvant contenir soit le nombre 0 pour une cellule morte, soit le nombre 1 pour une cellule vivante.</p>
+                <p>
+                    Lors de chaque pas de simulation, on calcule pour chacune des cellules de la grille, le nombre de voisines vivantes l'entourant (ie. les 8 cases adjacentes, soit le voisinnage de Moore). Ensuite, on applique des règles d'évolution permettant de déterminer si la cellule courante deviendra vivante si elle est morte ou se maintiendra en vie si elle vivante. Les règles d'évolutions précises sont définies ainsi:
+                <ul>
+                    <li>si une cellule est vivante et qu'elle est entourée de deux ou trois voisins, elle survit à la génération suivante,</li>
+                    <li>si une cellule est morte, elle ne ressucitera que si elle est entourée d'exactement trois cellules vivantes.</li>
+                </ul>
+                Afin de simplifier un peu les choses, on ne travaillera que sur les cases internes de la grille, c'est-à-dire les cellules situées sur la première/dernière ligne/colonne seront toujours mortes ce qui évite d'avoir à gérer les indices invalides lors du calcul portant sur le voisinnage.
+                </p>
+
+                <h3>Proposition de décomposition et gestion de l'affichage</h3>
+                <p>
+                    Afin de vous aider à démarrer, un peu de code vous est donné/suggéré pour vous faciliter la décomposition et surtout pour vous libérer de la gestion de l'affichage (dans un premier temps!). JavaScript étant typé dynamiquement, les commentaires aident à la spécification, lisez-les attentivement.
+                </p>
+                <p>Pour ce qui est de l'affichage, la fonction <tt>affiche</tt> vous est fournie afin de représenter le tableau constitué de 0 et de 1 dans une <tt>div</tt> particulière de la page HTML. Il suffit de lui passer en paramètre le tableau que vous souhaitez afficher. Ne perdez pas de temps sur le code de cette fonction (pour l'instant !). De même, à la fin du programme, la fonction <tt>setTimeout</tt> est utilisée afin d'appeler toutes les secondes la fonction passée en premier paramètre. En effet, il n'existe pas d'équivalent au <tt>sleep</tt> pour mettre en pause la VM JavaScript, sinon le navigateur serait bloqué.</p>
+
+                <h3>Extensions possibles</h3>    
+                <p>
+                    Lorsqu'une première version du jeu de la vie fonctionne, vous pouvez l'améliorer en ajoutant les différentes fonctionnalités proposées ci-dessous:
+                <ul>
+                    <li>gestion de l'aspect torique du monde,</li>
+                    <li>amélioration de l'IHM en passant par un tableau au lieu de texte brut en changeant juste le style des cellules du tableau en fonction de l'état des cellules de votre structure de données,</li>
+                    <li>génération automatisée du tableau initial pour disposer d'une grille de grande taille</li>
+                    <li>ajout de boutons pour simuler pas à pas l'évolution et en boucle</li>
+                    <li>ajout de boutons permettant de choisir différentes configurations initiales</li>
+                    <li>utilisation de couleurs différentes pour les cellules vivantes, en fonction de leur nombre de voisins</li>
+                    <li>et tout ce que vous pouvez imaginer d'intéressant !</li>
+                </ul>
+                </p>
+                <p>Précisions techniques: lorsque vous avancerez sur l'amélioration de l'IHM, il est fortement conseillé d'étudier le code de la fonction <tt>affiche</tt> qui vous a été donné afin de voir comment il est possible de modifier dynamiquement la page HTML contenant votre code JavaScript à l'aide de l'objet <tt>document</tt> et plus particulièrement des méthodes <tt>getElementById</tt> (pour récupérer une balise identifié par un <tt>id</tt> spécifique), <tt>createElement</tt> (qui permet de créer une balise, par exemple &lt;tr&gt; dans notre cas) et finalement <tt>appendChild</tt> (pour ajouter un noeud à un élément existant, par exemple un <tt>td</tt> au sein d'un élément <tt>tr</tt>).
+                </p>
+
+                <!-- Program 5 -->
+                <div>
+                    <textarea id="program5" class="programInput" rows="8" cols="50">
+// la grille de cellule avec un ensemble fixe (le carré) et un clignotant
+var monde = [
+    [0,0,0,0,0,0,0,0],
+    [0,1,1,0,0,0,0,0],
+    [0,1,1,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,1,0,0,0],
+    [0,0,0,0,1,0,0,0],
+    [0,0,0,0,1,0,0,0],
+    [0,0,0,0,0,0,0,0]
+    ];
+// fonction créeant un tableau à deux dimensions de nbLig lignes et nbCol colonnes, initialisé avec la valeur value
+// il est conseillé de commencer avec un tableau à une dimension dans lequel on ajoute progressivement chacune des lignes, représentées sous la forme d'un tableau à une dimension de nombres
+var mondeVide = function(nbLig, nbCol, value){
+  // à completer
+};
+// il vaut mieux avoir un tableau temporaire lors du calcul de la génération suivante ;)
+var mondeTMP = mondeVide(8,8,0);
+// fonction prenant en paramètre un tableau à deux dimensions contenant des 0 et 1 qui affiche le tableau sous forme de caractère dans la <tt>div</tt> d'<tt>id</tt> égal à <tt>GOLScreen</tt>
+var affiche = function(m) {
+  var screen = document.getElementById("GOLScreen");
+  screen.style['font-family'] = 'monospace';
+  screen.innerHTML = '';
+  for (var idxL=0; idxL<m.length; idxL++) {
+     var ligne = "";
+     for (var idxC=0; idxC<m[0].length; idxC++) {
+       ligne += (m[idxL][idxC] === 0 ? '.' : '*');
+     }
+     var node = document.createTextNode(ligne);
+     screen.appendChild(node);
+     var newLine = document.createElement("br");
+     screen.appendChild(newLine);
+  }
+}
+// calcul le nombre de cellules vivantes autour de la cellule de coordonnées (lig, col)
+var voisins = function(lig, col) {
+    // à completer
+};
+// détermine l'état d'une cellule à la génération suivante, le premier paramètre vaut 0 ou 1 (état de la cellule actuelle et le second correspond au nombre de cellules vivantes l'entourant
+var evolution = function(vivante, nbVoisins) {
+   // a completer : return 0 si la cellule doit mourir ou 1 sinon
+}
+// effectue un pas de simulation, en parcourant monde et initialisant mondeTMP avec les cellules de la génération suivante, puis recopie mondeTmp dans monde
+var simule = function() {
+    // à compléter
+};
+// appelle toutes les secondes la fonction passée en premier paramètre
+for (var i=0; i<5; i++) {
+  setTimeout(function() {affiche(monde); simule(); }, 1000*i);
+}
+undefined;
+                                </textarea>
+                                <div id='solution5' class='solution'>
+                                    <textarea class="programInput" readonly rows="4" cols="50">
+// Non, non, vous devez chercher ;)
+                                    </textarea>
+                                </div>
+                                </div><br/>
+                                <button onClick='runProgram(5)'>Run</button>
+                                <button id='soluce' onClick='showSolution(5)'>Surrender</button><br/>
+                                <div id='result5' class='programOutput'></div>
+                                <div id='GOLScreen' style="border-style: double;"><b>Affichage du programme jeu de la vie</b><br/></div>
+                                <!-- Program 5 -->
+
+                                <h3>Version en mode graphique</h3>
+
+                                <!-- Program 6 -->
+                                <div>
+                                    <textarea id="program6" class="programInput" rows="8" cols="50">
+// à compléter
+undefined;
+                                    </textarea>
+                                    <div id='solution6' class='solution'>
+                                        <textarea class="programInput" readonly rows="4" cols="50">
+// Non, non, vous devez chercher ;)
+                                        </textarea>
+                                    </div>
+                                </div><br/>
+                                <button onClick='runProgram(6)'>Run</button>
+                                <button id='soluce' onClick='showSolution(6)'>Surrender</button><br/>
+                                <div id='result6' class='programOutput'></div>
+                                <div style="border-style: double;">
+                                    <h2>Jeu de la vie en mode graphique avec une table</h2>
+                                    <table id='GOLScreen2'>
+                                    </table>
+                                </div>    
+                                <!-- Program 6 -->
+
+                                </body>
+                                </html>
+

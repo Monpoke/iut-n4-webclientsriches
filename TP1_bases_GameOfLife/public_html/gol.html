@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+    <head>
+        <title>
+            Game of Life
+        </title>
+        <meta charset="utf-8" />
+    </head>
+    
+    <body>
+        <div id="output" style="display:none;"></div>
+
+        <button onclick="pause();">Play/Pause</button>
+        <button onclick="restart();">NewGeneration</button><br />
+
+        <canvas id="myCanvas" width="800" height="600"></canvas>
+
+        <script type='text/javascript'>
+            console.log("reloaaded");
+            var WIDTH;
+            var HEIGHT;
+
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+            var CASE_WIDTH, CASE_HEIGHT;
+
+            function restart() {
+                WIDTH = parseInt(prompt("Largeur?"));
+                HEIGHT = parseInt(prompt("Hauteur ?"));
+                CASE_WIDTH = c.width / WIDTH;
+                CASE_HEIGHT = c.height / HEIGHT;
+                monde = genMonde(HEIGHT, WIDTH);
+
+
+            }
+
+            function pause() {
+                PAUSE = !PAUSE;
+            }
+            // la grille de cellule avec un ensemble fixe (le carré) et un clignotant
+            var monde;
+
+            var genMonde = function (nbLig, nbCol) {
+                var tmp = [];
+                nbGen = 0;
+                for (var i = 0; i < nbLig; i++) {
+                    var lig = [];
+                    for (var j = 0; j < nbCol; j++) {
+
+                        // push lines
+                        var n = parseInt(Math.random() * 10);
+                        if (n > 7) {
+                            lig.push(1);
+                        } else {
+                            lig.push(0);
+                        }
+                    }
+                    tmp.push(lig);
+                }
+                return tmp;
+            };
+
+
+            restart();
+
+
+
+            // fonction créeant un tableau à deux dimensions de nbLig lignes et nbCol colonnes, initialisé avec la valeur value
+            // il est conseillé de commencer avec un tableau à une dimension dans lequel on ajoute progressivement chacune des lignes, représentées sous la forme d'un tableau à une dimension de nombres
+            var mondeVide = function (nbLig, nbCol, value) {
+                var tmp = [];
+                for (var i = 0; i < nbLig; i++) {
+                    var lig = [];
+                    for (var j = 0; j < nbCol; j++) {
+                        lig.push(value);
+                    }
+                    tmp.push(lig);
+                }
+                return tmp;
+            };
+            // il vaut mieux avoir un tableau temporaire lors du calcul de la génération suivante ;)
+            var mondeTMP;
+            
+            // fonction prenant en paramètre un tableau à deux dimensions contenant des 0 et 1 qui affiche le tableau sous forme de caractère dans la <tt>div</tt> d'<tt>id</tt> égal à <tt>GOLScreen</tt>
+            var affiche = function () {
+                m = monde;
+                var screen = document.getElementById("output");
+                screen.style['font-family'] = 'monospace';
+                screen.innerHTML = '<h1>Conway\'s game of life</h1><h2>Generation ' + nbGen + '</h2>';
+                for (var idxL = 0; idxL < WIDTH; idxL++) {
+                    var ligne = "";
+                    for (var idxC = 0; idxC < HEIGHT; idxC++) {
+                        ligne += (m[idxL][idxC] === 0 ? '.' : '*');
+
+                        ctx.fillStyle = (m[idxL][idxC] === 0 ? "#FF0000" : "#0000FF");
+                        ctx.fillRect(idxC * CASE_WIDTH, idxL * CASE_HEIGHT, CASE_WIDTH, CASE_HEIGHT);
+                    }
+                    var node = document.createTextNode(ligne);
+                    screen.appendChild(node);
+                    var newLine = document.createElement("br");
+                    screen.appendChild(newLine);
+
+                    ctx.fillStyle = "#000000";
+                    ctx.font = "20px Georgia";
+                    ctx.fillText("Gen: " + nbGen, 30, 50);
+
+
+
+                }
+            }
+
+
+
+
+            // calcul le nombre de cellules vivantes autour de la cellule de coordonnées (lig, col)
+            var voisins = function (lig, col) {
+                var cpt = 0;
+
+                for (var x = col - 1; x <= col + 1; x++) {
+                    for (var y = lig - 1; y <= lig + 1; y++) {
+
+                        if (x === col && y === lig) {
+                            continue;
+                        }
+
+                        var ni = x;
+                        if (ni < 0) {
+                            ni = WIDTH + ni;
+                        } else if (ni >= WIDTH) {
+                            ni -= WIDTH;
+                        }
+
+                        var nj = y;
+                        if (nj < 0) {
+                            nj = HEIGHT + nj;
+                        } else if (nj >= HEIGHT) {
+                            nj -= HEIGHT;
+                        }
+
+                        if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT) {
+                            continue;
+                        }
+
+
+                        cpt += monde[ni][nj];
+
+
+                    }
+                }
+
+
+
+                return cpt;
+            };
+
+            // détermine l'état d'une cellule à la génération suivante, le premier paramètre vaut 0 ou 1 (état de la cellule actuelle et le second correspond au nombre de cellules vivantes l'entourant
+            var evolution = function (vivante, nbVoisins) {
+                // a completer : return 0 si la cellule doit mourir ou 1 sinon
+                if (!vivante && nbVoisins === 3)
+                    return 1;
+                if (vivante && (nbVoisins === 2 || nbVoisins === 3))
+                    return 1;
+                return 0;
+            }
+            var nbGen = 0;
+            var PAUSE = false;
+
+            // effectue un pas de simulation, en parcourant monde et initialisant mondeTMP avec les cellules de la génération suivante, puis recopie mondeTmp dans monde
+            var simule = function () {
+                affiche(monde);
+
+                if (PAUSE) {
+                    return;
+                }
+                
+                mondeTMP = mondeVide(WIDTH,HEIGHT,0);
+
+                for (var i = 0; i < WIDTH; i++)
+                    for (var j = 0; j < HEIGHT; j++)
+                        mondeTMP[i][j] = evolution((monde[i][j] === 0 ? false : true), voisins(j, i));
+
+
+
+
+                for (var i = 0; i < WIDTH; i++)
+                    for (var j = 0; j < HEIGHT; j++)
+                        monde[i][j] = mondeTMP[i][j];
+                nbGen++;
+                setTimeout(function () {
+                    simule();
+                }, 1000);
+            };
+            // appelle toutes les secondes la fonction passée en premier paramètre
+            simule();
+
+        </script>
+    </body>
+</html>
+
+
