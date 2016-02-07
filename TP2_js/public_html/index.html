@@ -9,7 +9,6 @@
             var chessSymbols = new Image();
             chessSymbols.src = 'chess.png';
             chessSymbols.onload = function () {
-                console.info("Chess symbols loaded !");
                 // dessine la grille, une fois l'image chargée
                 //drawGrid(0,0, canvas.width, canvas.height, 8, 8); 
             };
@@ -19,7 +18,7 @@
 
         <h1>Deep blue version JS</h1>
         <center><canvas id='screen' width='400' height='400' >JavaScript est nécessaire ...</canvas></center>
-
+        <p id="turn">White plays!</p>
 
 
     <script src="chess.js"></script>
