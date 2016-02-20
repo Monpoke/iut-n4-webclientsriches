@@ -16,11 +16,11 @@ $(function () {
     ctx.fillStyle = "#000000";
 
     // DEBUT FIN D'EDT
-    var debut = new Date(2015, 10, 01);
+    var debut = new Date(2015, 9, 14);
     debut.setHours(0);
-    var fin = new Date(2015, 10, 8);
-    
-    
+    var fin = new Date(2015, 9, 21);
+
+
     fin.setHours(0);
 
     var day = (60 * 60 * 24);
@@ -45,13 +45,25 @@ $(function () {
     $.each(data, function (key, value) {
         // on calcule la ligne du 19 au 24 octobre
         var split = value.dateSeance.split("-");
-        var heure = value.heureSeance.substring(0, 2);
-        var minute = value.heureSeance.substring(2, 2);
+
+        if (value.heureSeance.length === 3) {
+            var heure = value.heureSeance.substring(0, 1);
+            var minute = value.heureSeance.substring(1);
+        } else {
+            var heure = value.heureSeance.substring(0, 2);
+            var minute = value.heureSeance.substring(2);
+
+        
+        }
         var date = new Date(split[0], split[1], split[2], heure, minute);
 
         if (debut.getTime() > date.getTime() || date.getTime() > fin.getTime()) {
             return;
         }
+        console.log(heure + ":" + minute + " -> " + value.heureSeance);
+        console.log(split);
+        console.log(value.dateSeance);
+        console.log(date);
 
         var startDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), heureDebutEDT, 0);
 
@@ -83,13 +95,14 @@ $(function () {
 
         // prof 
         ctx.font = "8px Verdana";
+        ctx.fillText(value.dateSeance + " " + value.heureSeance, 10 + x, 60 + y);
         ctx.fillText(value.Prof, 10 + x, 30 + y);
         ctx.fillText(value.groupeId, 50 + x, 40 + y);
         ctx.fillText(value.Salle, 60 + x, 50 + y);
 
     });
-    
-    $("body").append("<div style='font-weight: bold; font-size: 18px;text-align:center'> Du " + debut.getDate() + "/" + debut.getMonth()+"/"+debut.getFullYear() + " au " + fin.getDate() + "/" + fin.getMonth()+"/"+fin.getFullYear()+"</div>");
+
+    $("body").append("<div style='font-weight: bold; font-size: 18px;text-align:center'> Du " + debut.getDate() + "/" + debut.getMonth() + "/" + debut.getFullYear() + " au " + fin.getDate() + "/" + fin.getMonth() + "/" + fin.getFullYear() + "</div>");
 });
 
 function getRandomColor() {
@@ -131,5 +144,5 @@ function invertHex(hexnum) {
         }
     }
 
-    return "#"+resultnum;
+    return "#" + resultnum;
 }
