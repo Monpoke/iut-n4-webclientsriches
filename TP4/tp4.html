@@ -1,0 +1,188 @@
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="style.css">
+    <title>JavaScript survivor's guide: AJAX !</title>
+    <script src='jquery-2.1.3.js'></script>
+    <script type='text/javascript'>
+// To show he solution to an exercise
+function showSolution(solutionId) {
+   document.getElementById('solution'+solutionId).style.display = 'inline-block';
+}
+// To evaluate "simple" JS code extract and output the result in a simple div
+function runProgram(pgmId) {
+   var UI=document.getElementById('program'+pgmId).value;
+   document.getElementById('result'+pgmId).innerHTML= eval(UI);
+}
+</script>
+  </head>
+  <body>
+    <h1>Premiers pas avec AJAX</h1>
+<p>
+Nous allons lors cette séance nous familiariser avec AJAX (<i>Asynchronous Javascript And Xml</i>) qui permet de construire des clients web plus interactifs en masquant les communications avec le serveur. Afin de réaliser cela, un serveur AJAX a été écrit afin que vous puissiez vous concentrer sur la réalisation de l'IHM de cette application. Le service proposé par le serveur est une gestion simplifiée d'une bibliothèque dans laquelle on peut ajouter et enlever des livres, les modifier et lister les livres présents. Vous reconnaissez là les 4 opérations CRUD habituelles: <tt>Create, Read, Update, Delete</tt>, qui vont correspondre assez naturellement aux verbes HTTP <tt>POST, GET, PUT, DELETE</tt> dans le cadre d'un serveur REST</p>
+
+<h2>Récupération et lancement du serveur</h2>
+<p>
+Afin d'écrire notre client REST, nous avons besoin d'un serveur ... Comme vous n'avez absolument pas à travailler cet aspect durant ce TP (vous allez le faire dans le TP du cours REST), vous allez vous contentez de récupérer un serveur déjà écrit, sans regarder comment il a été écrit (car je n'ai pas utilisé <i>jersey</i> mais <i>spark</i>, juste pour voir).
+</p>
+<p>
+La vie n'étant pas simple, vérfiez que vous êtes bien sous JDK 8, si ce n'est pas le cas, réglez votre variable <tt>JAVA_HOME</tt> afin qu'elle pointe sur ce JDK et mettez à jour votre <tt>PATH</tt>.
+</p>
+<p>
+Récupérez l'archive <tt>bookserver.jar</tt> disponible sur la page moodle, décompressez là, puis lancer le serveur à l'aide de la commande: <tt>java -cp . fr.iutinfo.Books</tt>. Vous n'aurez plus dans la suite du TP qu'à travailler sur la page HTML contenant le client qui se trouve dans <tt>public/index.html</tt>.
+</p>
+    
+<h2><tt>curl</tt>, un ami qui vous veut du bien</h2>
+<p>
+Avant de développer notre client web pour serveur REST, il peut être pratique de comprendre un minimum comment fonctionne l'outil <tt>curl</tt> qui permet de faire des requêtes HTTP en ligne de commande. C'est toujours pratique lorsque l'on veut tester <i>à la main</i> ce que nous retourne un serveur HTTP. Nous n'allons pas étudier cela en profondeur, mais voici quelques usages les plus courants qui vont nous permettre de découvrir un peu le protocole utilisé par le serveur dont vous allez réaliser le client web correspondant.
+</p>
+<p>
+Première opération, effectuons un simple <tt>GET</tt> sur l'URI <tt>/books</tt>:
+</p>
+<div class="code">
+    <pre>
+curl http://localhost:4567/books
+[{"author":"Herman Hesse","title":"Le jeu des perles de verre","id":1}]
+    </pre>
+</div>
+<p>On constate ainsi que le serveur contient par défaut une ressource: un livre d'Herman Hesse. On observe aussi ainsi la structure d'un livre qui semble être décrit par trois champs: un <i>auteur</i>, un <i>titre</i> et un <i>identifiant</i>. Effectuons maintenant un deuxième test en ajoutant un identifiant de livre à l'URI précédente:</p>
+<div class="code">
+    <pre>
+curl http://localhost:4567/books/1
+{"author":"Herman Hesse","title":"Le jeu des perles de verre","id":1}
+    </pre>
+</div>
+<p>Quelle différence voyez-vous par rapport à la requête précédente ? Si cela ne vous semble pas évident, tentons une autre requête, un peu plus complexe afin d'ajouter un nouveau livre à notre bibliothèque:
+</p>
+<div class="code">
+  <pre>
+curl --data "author=Frank Herbert&title=Dune 2" localhost:4567/books
+{"author":"Frank Herbert","title":"Dune 2","id":2}
+  </pre>
+</div>
+<p>
+Réessayez la première requête pour vérifier que votre bibliothèque a bien évolué. Supposons maintenant que nous ayons une erreur dans le nom d'un de nos auteurs:
+</p>
+<div class="code">
+  <pre>
+curl -X PUT -d author="Hesse" localhost:4567/books/1
+{ status: sucess, message: 'Book with id=1' updated ! }
+  </pre>
+</div>
+<p>Comment pouvez-vous facilement vérifier ce qu'affirme le message en retour ? Finalement, supposons que l'on donne un de nos livres:
+</p>
+</p>
+<div class="code">
+  <pre>
+curl -X DELETE localhost:4567/books/2
+{ deleted: 2}
+  </pre>
+</div>
+<p>De nouveau, comme vous êtes paranoïaque, comment vérifier que ce message de retour dit vrai ?</p>
+<p>
+Ce dernier exemple achève notre tour des principales requêtes disponibles sur notre serveur REST de gestion (ultra simplifiée) de bibliothèque. Nous avons appris plusieurs choses importantes:
+<ul>
+    <li>le serveur définit les 4 opérations classiques représentées par l'acronyme <tt>CRUD</tt> pour <tt>Create</tt>, <tt>Read</tt>, <tt>Update</tt> et <tt>Delete</tt> sur des ressources représentant des livres,</li>
+    <li>ces 4 opérations sont traduites en requêtes HTTP avec des verbes spécifiques <tt>POST</tt>, <tt>GET</tt>, <tt>PUT</tt> et <tt>DELETE</tt> (mais vous creuserez tout cela dans un autre cours ;))</li>
+    <li>les messages retournés par le serveur sont au format JSON.</li>
+    <li>et finalement <tt>curl</tt> sera votre nouvel ami pour débugguer un serveur REST !</li>
+</ul>
+</p>
+<p>
+Maintenant que nous avons une bonne compréhension du protocole d'accès et de manipulation de nos ressources (livres), nous allons pouvoir nous concentrer sur le côté client qui va fournir la visaulisation et les contrôleurs permettant de changer l'état de notre bibliothèque.
+</p>
+      
+<h2>Création de la vue du client REST</h2>
+<p>
+La première étape consiste à créer un squelette de page HTML qui sera enrichi au fur et à mesure de votre progression des différentes actions pouvant être effectuées sur la bibliothèque. Concrètement, nous allons traduire les requêtes réalisées manuellement avec <tt>curl</tt> sous la forme de fonctions JavaScript exploitant <i>jQuery</i> pour interroger le serveur et mettre en forme les résultats de ces requêtes. Le coeur de ce TP consiste à écrire ces fonctions, mais si vous y parvenez rapidement, vous pourrez commencer à explorer les aspects "esthétiques" de <i>jQuery</i> afin d'améliorer l'ergonomie et la qualité visuelle de votre client. Mais uniquement dans un second temps !
+</p>
+<p>Avant de nous lancer sur les contrôleurs qui vont effectuer les requêtes vers le serveur et injecter les résultats dans l'arbre DOM, nous allons nous concentrer sur la vue de notre client. Pour faire simple, nous n'aurons qu'une seule page dans notre application (on appelle cela une <a href='http://en.wikipedia.org/wiki/Single-page_application'>Single Page Application (SPA)</a>) qui listera les différentes actions possibles et présentera les résultats des interactions avec le serveur dans la même page. Vous trouverez ci-dessous le squelette initial de notre client:
+</p>
+<div class="code">
+    <pre>
+
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"/&gt;
+    &lt;link rel="stylesheet" href="css/style.css"/&gt;
+    &lt;title>Welcome to BOOKS !&lt;/title&gt;
+    &lt;script src='js/jquery-2.1.3.js'/&gt;
+    &lt;script&gt;
+// IMPORTANT ! Otherwise the DOM is not yet created !
+$(document).ready(function() {
+
+}); // end document.ready
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1>Bienvenue dans votre bibliothèque !&lt;/h1&gt;
+    &lt;img src='img/books.jpg' width='200'/&gt;
+    &lt;p&gt;
+Sélectionnez l'action que vous souhaitez réaliser:
+    &lt;/p&gt;
+    &lt;div id='output'&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+    </pre>
+</div>
+
+<p>Pas grand chose de transcendant: on fixe l'encodage pour ne pas être embêté avec les caractères accentués, on définit la feuille de style, on importe <i>jQuery</i> et on introduit le script qui contiendra toutes les fonctions liées aux contrôleurs. Finalement, on ajoute un peu d'HTML pour faire plaisir à l'utilisateur ;) La première étape consiste à modifier la vue (donc ce qui se trouve dans la balise &lt;body&gt;) afin de reproduire l'écran ci-dessous.
+</p>
+<center><img src='vue.png' width='600' style='border-style: double'/></center>
+<p>Comme vous le constatez, on ne fait pas dans le "joli" pour l'instant, on se concentre sur les opérations CRUD à implémenter. Il est conseillé de jeter un oeil sur la syntaxe pour les formulaires HTML (<tt>form</tt> et <tt>input</tt>) et de penser aussi à définir judicieusement quelques <tt>id</tt> qui permettront de repérer facilement certains éléments de votre vue à partir d'un sélecteur CSS via <i>jQuery</i>. Pour l'instant, vous pouvez-vous contenter de visualiser le résultat dans votre navigateur en chargeant la page comme un simple fichier. Ensuite, nous devrons passer par le serveur REST qui nous servira dans un premier temps la page HTML afin que les fonctions AJAX puissent ensuite interagir avec le serveur.</p>
+
+<h2>Création des contrôleurs du client REST</h2>
+<p>
+Maintenant que la vue est en place, nous pouvons nous concentrer sur les contrôleurs qui vont réaliser les 4 opérations <tt>CRUD</tt>. Afin de réaliser les requêtes AJAX au niveau du serveur, nous allons exploiter les primitives fournies par <i>jQuery</i>. Plutôt que reproduire inutilement de la documentation technique et vu votre familiarité avec la langue de Shakespeare, lisez attentivement les informations données sur cette page <a href='http://learn.jquery.com/ajax/jquery-ajax-methods/'>http://learn.jquery.com/ajax/jquery-ajax-methods</a>. vous y trouverez la description détaillée de la fonction <tt>ajax()</tt> que nous utiliserons pour effectuer les requêtes auprès du serveur. Dans la suite, nous allons implémenter la fonction associée à l'attribut <tt>success</tt> d'une requête AJAX (vous pouvez faire un copier/coller du contenu du lien précédent pour ce qui est des fonctions <tt>error</tt> et <tt>complete</tt>). Dernier élément, il est conseillé de définir des <tt>div</tt> avec des <tt>id</tt> portant le nom des quatres opérations, ce qui permet ensuite d'associer facilement le gestionnaire d'évènement qui déclenchera la requête AJAX, à l'image du code  suivant:
+</p>
+<div class="code">
+    <pre>
+$('#newbook').click(function (event) {
+  $.ajax( ... );
+});
+    </pre>
+</div>
+
+<h3>Lister les livres de la bibliothèque (<tt>Read</tt>)</h3>
+<p>
+Le premier contrôleur a pour responsabilité d'afficher la liste des livres présents dans la bibliothèque. Pour cela, reportez-vous aux requêtes <tt>curl</tt> réalisées en début de TP afin de déterminer l'URI ainsi que le verbe HTTP à utiliser. Dans un premier temps, vous pouvez vous contenter d'afficher le résultat de la requête dans la console à l'aide de l'instruction suivante: <tt>console.log(JSON.stringify(json));</tt>. Dans un second temps, parcourez le tableau retourné et affichez son contenu sous la forme d'une liste dans l'élément d'<tt>id=output</tt> comme l'illustre la capture ci-dessous:
+</p>
+<center><img src='lister.png' width='600' style='border-type: double' /></center>
+<p>Afin de réaliser cela, il peut être d'utiliser la fonction <tt>forEach</tt> qui permet de parcourir les éléments d'un tableau et d'appliquer une fonction sur chacun des éléments. Cette fonction a deux paramètres: le premier correspond à l'élément actuel à traiter et le second l'indice de cet élément.</p>
+<p>Afin de vérifier que cela fonctionne bien, vous pouvez-vous amuser à ajouter de nouveaux livres à l'aide de <tt>curl</tt> dans un terminal et relancer votre affichage de la bibliothèque.</p>
+
+<h3>Ajouter un livre à la bibliothèque (<tt>Create</tt>)</h3>
+<p>
+Le deuxième contrôleur a pour responsabilité d'ajouter un livre à la bibliothèque. Il correspond donc à un <tt>Create</tt> (et donc un <tt>POST</tt>). Il suffit de passer le nom d'auteur et le titre en paramètre, l'identifiant unique étant calculé par le serveur. Ajoutez cette opération afin de produire la notification suivante à l'utilisateur en cas de succès:
+</p>
+<center><img src='creer.png' width='600' style='border-style: double'/></center>
+<p>
+De nouveau, vous pouvez vérifier que tout fonctionne bien, en cliquant juste sur <i>"Lister tous les livres"</i> ;).
+</p>
+
+<h3>Supprimer un livre de la bibliothèque (<tt>Delete</tt>)</h3>
+<p>
+Le troisième contrôleur a pour responsabilité de supprimer un livre de la bibliothèque. On se base pour cela sur l'<tt>id</tt> qui est un identifiant unique. Ajoutez le gestionnaire d'évènement effectuant la requête AJAX permettant cela afin d'obtenir un affichage similaire à celui-ci:
+</p>
+<center><img src='beforedelete.png' width='400' style='border-style: double; margin-right: 50px'><img src='afterdelete.png' width='400' style='border-style: double'></center>
+
+<h3>Mettre à jour un livre de la bibliothèque (<tt>Update</tt>)</h3>
+<p>
+</p>
+
+<h2>Extensions possibles ...</h2>
+<p>
+Une fois que l'ensemble des opérations CRUD sont disponibles, il est possible d'imaginer un certain nombre d'améliorations:
+<ul>
+    <li>au niveau esthétique: concentrer vous sur la CSS principale de la page, ainsi que sur les propriétés de style pouvant être fixées dynamiquement au niveau de <i>jQuery</i> (enfin, surtout pour les animations car sinon, il est préférable que le style reste regroupé au niveau de la CSS),</li>
+    <li>il est possible d'imaginer que sur la mise à jour, lorsque l'utilisateur saisit l'ID, une requête AJAX cherche le livre correspondant et affiche les informations dans les zones de saisie, faciltant ainsi la vie à l'utilisateur,</li>
+    <li>on pourrait exploiter le même mécanisme au niveau de la suppression d'un livre, mais cette fois-ci avec un affichage sous forme de texte simple,</li>
+</ul>
+Il ne reste plus qu'a vous faire plaisir au niveau de l'esthétique et l'ergonomie ! :)
+</p>
+
+  </body>
+</html>
+
